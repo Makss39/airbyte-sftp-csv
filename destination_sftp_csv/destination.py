@@ -23,6 +23,7 @@ class DestinationSftpCsv(Destination):
         input_messages: Iterable[AirbyteMessage],
     ) -> Iterable[AirbyteMessage]:
 
+        # NOTE: config peut contenir extraction_mode="direct" ou "pandas"
         with SftpClient(**config) as writer:
 
             # Overwrite mode → supprimer fichiers existants avant la sync
