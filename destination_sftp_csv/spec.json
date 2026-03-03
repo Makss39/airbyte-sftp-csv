@@ -1,119 +1,190 @@
 {
   "documentationUrl": "https://docs.airbyte.com/integrations/destinations/sftp-json",
-  "supported_destination_sync_modes": ["overwrite", "append"],
+  "supported_destination_sync_modes": ["overwrite"],
   "supports_incremental": true,
+
   "connectionSpecification": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "Destination SFTP CSV",
     "type": "object",
-    "required": ["host", "username", "password"],
     "additionalProperties": false,
+
     "properties": {
-      "host": {
-        "title": "Host",
-        "description": "Hostname of the SFTP server.",
-        "type": "string",
-        "order": 0
+      "connection": {
+        "type": "object",
+        "title": "Connection Settings",
+        "order": 0,
+        "required": ["host", "username", "password"],
+        "properties": {
+          "host": {
+            "title": "Host",
+            "description": "Hostname of the SFTP server.",
+            "type": "string",
+            "order": 0
+          },
+          "port": {
+            "title": "Port",
+            "description": "Port of the SFTP server.",
+            "type": "integer",
+            "default": 22,
+            "order": 1
+          },
+          "username": {
+            "title": "User",
+            "description": "Username to use to access the SFTP server.",
+            "type": "string",
+            "order": 2
+          },
+          "password": {
+            "title": "Password",
+            "description": "Password associated with the username.",
+            "type": "string",
+            "airbyte_secret": true,
+            "order": 3
+          },
+          "destination_path": {
+            "title": "Destination path",
+            "type": "string",
+            "description": "Path to the directory where CSV files will be written.",
+            "default": "/",
+            "order": 4
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string",
+            "description": "Override the default CSV filename.",
+            "default": "",
+            "order": 5
+          },
+          "extension": {
+            "title": "File Extension",
+            "type": "string",
+            "description": "Override the default file extension.",
+            "default": "",
+            "order": 6
+          },
+          "add_timestamp_to_filename": {
+            "title": "Add Timestamp to Filename",
+            "type": "boolean",
+            "description": "Append the current UTC timestamp.",
+            "default": false,
+            "order": 7
+          }
+        }
       },
-      "port": {
-        "title": "Port",
-        "description": "Port of the SFTP server.",
-        "type": "integer",
-        "minimum": 0,
-        "maximum": 65535,
-        "default": 22,
-        "examples": [22],
-        "order": 1
-      },
-      "username": {
-        "title": "User",
-        "description": "Username to use to access the SFTP server.",
-        "type": "string",
-        "order": 2
-      },
-      "password": {
-        "title": "Password",
-        "description": "Password associated with the username.",
-        "type": "string",
-        "airbyte_secret": true,
-        "order": 3
-      },
-      "destination_path": {
-        "title": "Destination path",
-        "type": "string",
-        "description": "Path to the directory where CSV files will be written.",
-        "default": "/",
-        "examples": ["/my/remote/path/"],
-        "order": 4
-      },
-      "filename": {
-        "title": "CSV Filename",
-        "type": "string",
-        "description": "Override the default CSV filename (default: {stream}.csv). File name WITHOUT extension.",
-        "default": "",
-        "examples": ["my_filename"],
-        "order": 5
-      },
-      "extension": {
-        "title": "File Extension",
-        "type": "string",
-        "description": "Override the default file extension (default: .csv).",
-        "default": "",
-        "examples": [".csv", ".txt"],
-        "order": 6
-      },      
-      "add_timestamp_to_filename": {
-        "title": "Add Timestamp to Filename",
-        "type": "boolean",
-        "description": "Append the current UTC timestamp (Zulu time) to the CSV filename before the .csv extension.",
-        "default": false,
-        "order": 7
-      },
-      "separator": {
-        "title": "CSV Separator",
-        "type": "string",
-        "description": "Character used to separate CSV fields.",
-        "default": ",",
-        "examples": [",", ";"],
-        "order": 8
-      },
-      "encoding": {
-        "title": "CSV Encoding",
-        "type": "string",
-        "description": "File encoding to use when writing CSV files.",
-        "default": "utf-8",
-        "examples": ["utf-8", "latin-1"],
-        "order": 9
-      },
-      "quoting": {
-        "title": "CSV Quoting",
-        "type": "string",
-        "description": "CSV quoting style: ALL, MINIMAL, NONNUMERIC, NONE",
-        "default": "ALL",
-        "enum": ["ALL", "MINIMAL", "NONNUMERIC", "NONE"],
-        "order": 10
-      },
-      "include_header": {
-        "title": "Include Header",
-        "type": "boolean",
-        "description": "Whether to write the header row in the CSV file.",
-        "default": true,
-        "order": 11
-      },
-      "line_terminator": {
-        "title": "Line Terminator",
-        "type": "string",
-        "description": "Character(s) to use as line terminator in CSV files. Default is LF (\\n), put CRLF (\\r\\n) if needed.",
-        "default": "\n",
-        "order": 12
-      },
-      "batch_size": {
-        "title": "Batch Size",
-        "type": "integer",
-        "description": "Number of records to write in each batch.",
-        "default": 5000,
-        "minimum": 1,
-        "order": 13
+
+      "csv_options": {
+        "title": "Extraction Mode",
+        "type": "object",
+        "order": 1,
+        "oneOf": [
+          {
+            "title": "Direct CSV mode",
+            "properties": {
+              "extraction_mode": {
+                "title": "Extraction Mode",
+                "type": "string",
+                "const": "direct",
+                "description": "Stream records using csv.DictWriter."
+              },
+              "separator": {
+                "title": "CSV Separator",
+                "type": "string",
+                "default": ",",
+                "order": 9
+              },
+              "encoding": {
+                "title": "CSV Encoding",
+                "type": "string",
+                "default": "utf-8",
+                "order": 10
+              },
+              "quoting": {
+                "title": "CSV Quoting",
+                "type": "string",
+                "default": "ALL",
+                "enum": ["ALL", "MINIMAL", "NONNUMERIC", "NONE"],
+                "order": 11
+              },
+              "include_header": {
+                "title": "Include Header",
+                "type": "boolean",
+                "default": true,
+                "order": 12
+              },
+              "line_terminator": {
+                "title": "Line Terminator",
+                "type": "string",
+                "default": "\n",
+                "order": 13
+              },
+              "batch_size": {
+                "title": "Batch Size",
+                "type": "integer",
+                "default": 5000,
+                "order": 14
+              }
+            },
+            "required": ["extraction_mode"]
+          },
+
+          {
+            "title": "Pandas CSV mode",
+            "properties": {
+              "extraction_mode": {
+                "title": "Extraction Mode",
+                "type": "string",
+                "const": "pandas",
+                "description": "Load all rows into a DataFrame, write a single CSV."
+              },
+              "separator": {
+                "title": "CSV Separator",
+                "type": "string",
+                "default": ",",
+                "order": 9
+              },
+              "encoding": {
+                "title": "CSV Encoding",
+                "type": "string",
+                "default": "utf-8",
+                "order": 10
+              },
+              "quoting": {
+                "title": "CSV Quoting",
+                "type": "string",
+                "default": "ALL",
+                "enum": ["ALL", "MINIMAL", "NONNUMERIC", "NONE"],
+                "order": 11
+              },
+              "include_header": {
+                "title": "Include Header",
+                "type": "boolean",
+                "default": true,
+                "order": 12
+              },
+              "line_terminator": {
+                "title": "Line Terminator",
+                "type": "string",
+                "default": "\n",
+                "order": 13
+              }
+            },
+            "required": ["extraction_mode"]
+          },
+
+          {
+            "title": "Fixed-width mode",
+            "properties": {
+              "extraction_mode": {
+                "title": "Extraction Mode",
+                "type": "string",
+                "const": "fixed",
+                "description": "Write fixed-width lines with no delimiter or header."
+              }
+            },
+            "required": ["extraction_mode"]
+          }
+        ]
       }
     }
   }

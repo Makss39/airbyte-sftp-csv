@@ -5,7 +5,7 @@ I'm not the original author of this airbyte connector. I modified it based on th
 # Featuring
 
  * No empty line at the end of the file
- * Write only on the remote sftp server
+ * Chose between direct streaming mode or panda
  * Flush all stream into associated csv file at the end off the process
  * Add several options for CSV formatting
 
