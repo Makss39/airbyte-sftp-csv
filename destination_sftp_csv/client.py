@@ -90,7 +90,8 @@ class SftpClient:
         self.extraction_mode = (extraction_mode or "direct").lower()
         if self.extraction_mode not in ("direct", "pandas", "fixed"):
             raise ValueError("extraction_mode must be 'direct', 'pandas' or 'fixed'")
-
+        if self.extraction_mode not in ("direct", "pandas"):
+            raise ValueError("extraction_mode must be 'direct' or 'pandas'")
         # quoting mapping
         self.quoting = {
             "ALL": csv.QUOTE_ALL,
@@ -267,6 +268,7 @@ class SftpClient:
         Flush remaining records and close all files (direct) or
         materialize DataFrames and upload (pandas).
         """
+
         #PANDAS
         if self.extraction_mode == "pandas":
             self._flush_all_pandas()

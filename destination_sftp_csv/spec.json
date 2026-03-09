@@ -185,6 +185,114 @@
             "required": ["extraction_mode"]
           }
         ]
+
+      "port": {
+        "title": "Port",
+        "description": "Port of the SFTP server.",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 65535,
+        "default": 22,
+        "examples": [22],
+        "order": 1
+      },
+      "username": {
+        "title": "User",
+        "description": "Username to use to access the SFTP server.",
+        "type": "string",
+        "order": 2
+      },
+      "password": {
+        "title": "Password",
+        "description": "Password associated with the username.",
+        "type": "string",
+        "airbyte_secret": true,
+        "order": 3
+      },
+      "destination_path": {
+        "title": "Destination path",
+        "type": "string",
+        "description": "Path to the directory where CSV files will be written.",
+        "default": "/",
+        "examples": ["/my/remote/path/"],
+        "order": 4
+      },
+      "extraction_mode": {
+        "title": "Extraction Mode",
+        "description": "Choose between streaming mode (direct) or pandas mode (full DataFrame export).",
+        "type": "string",
+        "enum": ["direct", "pandas"],
+        "default": "direct",
+        "order": 5
+      },
+      "filename": {
+        "title": "CSV Filename",
+        "type": "string",
+        "description": "Override the default CSV filename (default: {stream}.csv). File name WITHOUT extension.",
+        "default": "",
+        "examples": ["my_filename"],
+        "order": 6
+      },
+      "extension": {
+        "title": "File Extension",
+        "type": "string",
+        "description": "Override the default file extension (default: .csv).",
+        "default": "",
+        "examples": [".csv", ".txt"],
+        "order": 7
+      },
+      "add_timestamp_to_filename": {
+        "title": "Add Timestamp to Filename",
+        "type": "boolean",
+        "description": "Append the current UTC timestamp (Zulu time) to the CSV filename before the .csv extension.",
+        "default": false,
+        "order": 8
+      },
+      "separator": {
+        "title": "CSV Separator",
+        "type": "string",
+        "description": "Character used to separate CSV fields.",
+        "default": ",",
+        "examples": [",", ";"],
+        "order": 9
+      },
+      "encoding": {
+        "title": "CSV Encoding",
+        "type": "string",
+        "description": "File encoding to use when writing CSV files.",
+        "default": "utf-8",
+        "examples": ["utf-8", "latin-1"],
+        "order": 10
+      },
+      "quoting": {
+        "title": "CSV Quoting",
+        "type": "string",
+        "description": "CSV quoting style: ALL, MINIMAL, NONNUMERIC, NONE",
+        "default": "ALL",
+        "enum": ["ALL", "MINIMAL", "NONNUMERIC", "NONE"],
+        "order": 11
+      },
+      "include_header": {
+        "title": "Include Header",
+        "type": "boolean",
+        "description": "Whether to write the header row in the CSV file.",
+        "default": true,
+        "order": 12
+      },
+      "line_terminator": {
+        "title": "Line Terminator",
+        "type": "string",
+        "description": "Character(s) to use as line terminator in CSV files. Default is LF (\\n), put CRLF (\\r\\n) if needed.",
+        "default": "\n",
+        "order": 13
+      },
+      "batch_size": {
+        "title": "Batch Size",
+        "type": "integer",
+        "description": "Number of records to write in direct streaming mode.",
+        "default": 5000,
+        "minimum": 1,
+        "order": 14
       }
     }
   }

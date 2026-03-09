@@ -51,6 +51,10 @@ class DestinationSftpCsv(Destination):
         # FIX: flatten config BEFORE constructing SftpClient
         flat_config = _flatten_config(config)
 
+        # NOTE: config peut contenir extraction_mode="direct" ou "pandas"
+        with SftpClient(**config) as writer:
+
+
         with SftpClient(**flat_config) as writer:
 
             # overwrite mode → delete previous file before writing new one
