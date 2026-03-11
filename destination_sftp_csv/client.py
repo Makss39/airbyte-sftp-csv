@@ -61,11 +61,9 @@ class SftpClient:
         quoting: str = "ALL",
         include_header: bool = True,
         line_terminator: str = "\n",
-        # --- NEW ---
-        extraction_mode: str = "direct",        # "direct" | "pandas"
-        quotechar: str = '"',                   # applicable to both modes
-        na_rep: str = "",                       # pandas: how to represent NaN/None
-        # escapechar could be added if needed
+        extraction_mode: str = "direct",
+        quotechar: str = '"',              
+        na_rep: str = "",                
     ):
         # connection / naming
         self.host = host
@@ -82,16 +80,21 @@ class SftpClient:
         self.separator = separator
         self.encoding = encoding
         self.include_header = include_header
-        self.line_terminator = line_terminator
         self.quotechar = quotechar
         self.na_rep = na_rep
+
+        
+        # line terminator (convert literal \n into real newline)
+        if isinstance(line_terminator, str):
+            self.line_terminator = line_terminator.encode().decode("unicode_escape")
+        else:
+            self.line_terminator = line_terminator
 
         # mode
         self.extraction_mode = (extraction_mode or "direct").lower()
         if self.extraction_mode not in ("direct", "pandas", "fixed"):
             raise ValueError("extraction_mode must be 'direct', 'pandas' or 'fixed'")
-        if self.extraction_mode not in ("direct", "pandas"):
-            raise ValueError("extraction_mode must be 'direct' or 'pandas'")
+
         # quoting mapping
         self.quoting = {
             "ALL": csv.QUOTE_ALL,
